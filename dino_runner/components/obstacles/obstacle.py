@@ -1,9 +1,9 @@
 class Obstacle:
   def __init__(self):
-    pass 
+    self.name = "IDK"
 
   def update(self): 
-    pass
+    print("From update")
 
   def draw(self): 
-    pass
+    print("From draw")

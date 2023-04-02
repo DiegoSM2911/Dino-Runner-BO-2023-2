@@ -22,10 +22,10 @@ class Dinosaur:
     if self.dino_jump:
       self.jump()
 
-    if self.dino_duck:
+    elif self.dino_duck:
       self.duck()
 
-    if self.dino_run:
+    elif self.dino_run:
       self.run()
 
 
@@ -38,11 +38,6 @@ class Dinosaur:
       self.dino_run = False
       self.dino_duck = False
       self.dino_jump = True
-
-    elif user_input[pygame.K_DOWN] and not self.dino_jump:
-      self.dino_run = False
-      self.dino_duck = True
-      self.dino_jump = False
 
     elif not self.dino_jump:
       self.run()
@@ -77,5 +72,3 @@ class Dinosaur:
       self.dino_rect.y = self.Y_POS
       self.dino_jump = False
       self.jump_vel = self.JUMP_VEL
-
-#tarea añadir las nubes

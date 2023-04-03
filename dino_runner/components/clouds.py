@@ -1,4 +1,5 @@
 from dino_runner.utils.constants import CLOUD, SCREEN_WIDTH
+import random
 
 class Clouds():
   CLOUD_VEL = 2.5
@@ -22,3 +23,4 @@ class Clouds():
       pos_image[0] -= self.cloud_vel 
       if pos_image[0] < -300: 
         pos_image[0] = SCREEN_WIDTH
+        pos_image[1] = random.randint(50, 100)

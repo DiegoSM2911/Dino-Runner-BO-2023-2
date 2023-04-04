@@ -1,5 +1,6 @@
 from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 import pygame
+import math
 
 class Dinosaur:
   X_POS = 80
@@ -18,6 +19,7 @@ class Dinosaur:
     self.dino_duck = False
     self.jump_vel = self.JUMP_VEL
     self.dino_dead = False
+    self.score = 0
 
   def update(self, user_input):
     if self.dino_jump:
@@ -39,11 +41,6 @@ class Dinosaur:
       self.dino_run = False
       self.dino_duck = False
       self.dino_jump = True
-
-    elif user_input[pygame.K_RIGHT] and not self.dino_jump:
-      self.dino_rect = self.image.get_rect()
-      self.dino_rect.x += 150
-      self.dino_rect.y += self.Y_POS
 
     elif not self.dino_jump:
       self.run()

@@ -23,4 +23,4 @@ class Clouds():
       pos_image[0] -= self.cloud_vel 
       if pos_image[0] < -300: 
         pos_image[0] = SCREEN_WIDTH
-        pos_image[1] = random.randint(50, 100)
+        pos_image[1] = random.randint(0, 100)

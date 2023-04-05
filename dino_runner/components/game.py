@@ -4,6 +4,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.clouds import Clouds
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 import time
+from dino_runner.components.power_ups.power_up_manager import PowerUpsManager
 
 class Game:
     def __init__(self):
@@ -20,6 +21,8 @@ class Game:
         self.player = Dinosaur()
         self.clouds = Clouds()
         self.obstacle_manager = ObstacleManager()
+        self.power_manager = PowerUpsManager()
+        self.points = 0
 
 
     def run(self):
@@ -40,14 +43,16 @@ class Game:
     def update(self):
         user_inputs = pygame.key.get_pressed()
         self.player.update(user_inputs)
+        self.points += 1
         self.obstacle_manager.update(self.game_speed, self.player, self)
-        
+        self.clouds.update(self.game_speed)
+        self.power_manager.update(self.game_speed, self.points, self.player)
         if self.player.dino_dead:
             self.playing = False
 
-        if self.player.score % 20 == 0:
+        if self.player.score % 10 == 0:
             self.screen_color = [255, 255, 255]
-        elif self.player.score % 10 == 0:
+        elif self.player.score % 5 == 0:
             self.screen_color = [0, 0, 0]
 
     def draw(self):
@@ -57,6 +62,7 @@ class Game:
         self.player.draw(self.screen)
         self.clouds.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.power_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -69,6 +75,4 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
-#tarea agregar cactus grande al juego
-#intentar agregar el pajaro crear clase ave
-#mostrar dinosaurio muerto
+#tarea hacer aparecer el martillo y que solamente se muestre la figura del dinosaurio con el martillo

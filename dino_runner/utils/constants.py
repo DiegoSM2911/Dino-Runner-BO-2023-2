@@ -6,6 +6,7 @@ TITLE = "Chrome Dino Runner"
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 SCREEN_COLOR = [255, 255, 255]
+SCORE_COLOR = [0, 0, 0]
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 
@@ -79,3 +80,5 @@ DEFAULT_TYPE = "default"
 SHIELD_TYPE = "shield"
 
 HAMMER_TYPE = "hammer"
+
+HEART_TYPE = "life"

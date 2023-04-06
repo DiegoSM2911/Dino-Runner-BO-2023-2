@@ -14,11 +14,12 @@ class Sun:
   def draw(self, screen):
     screen.blit(self.image, self.sun_rect)
 
-  def update(self, speed_game, game):
-    self.sun_rect.x -= speed_game // 2
+  def update(self, game):
+    self.sun_rect.x -= game.game_speed // 3
     if self.sun_rect.x < -(self.X_POS + self.image.get_size()[0]):
       self.sun_rect.x = self.X_POS + self.image.get_size()[0]
       
 
     if self.sun_rect.x < -self.image.get_size()[0]:
       game.screen_color = [0, 0, 0]
+      game.score_color = [255, 255, 255]

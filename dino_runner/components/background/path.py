@@ -20,11 +20,8 @@ class Path:
     screen.blit(self.image, (self.x_pos_bg, self.y_pos_bg))
     screen.blit(self.image, (image_width + self.x_pos_bg, self.y_pos_bg))
 
-  def update(self, speed_game):
+  def update(self, game):
     image_width = self.image.get_width()
     if self.x_pos_bg <= -image_width:
       self.x_pos_bg = 0
-    self.x_pos_bg -= speed_game
-
-  def xd(self, selfw):
-    print(selfw.points)
+    self.x_pos_bg -= game.game_speed

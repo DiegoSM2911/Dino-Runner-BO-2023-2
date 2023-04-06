@@ -14,10 +14,11 @@ class Moon:
   def draw(self, screen):
     screen.blit(self.image, self.moon_rect)
 
-  def update(self, speed_game, game):
-    self.moon_rect.x -= speed_game // 2
+  def update(self, game):
+    self.moon_rect.x -= game.game_speed // 3
     if self.moon_rect.x < -(self.X_POS + self.image.get_size()[0]):
       self.moon_rect.x = self.X_POS + self.image.get_size()[0]
 
     if self.moon_rect.x < -self.image.get_size()[0]:
       game.screen_color = [255, 255, 255]
+      game.score_color = [0, 0, 0]

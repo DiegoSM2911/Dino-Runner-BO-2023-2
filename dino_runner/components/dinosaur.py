@@ -1,7 +1,9 @@
 from dino_runner.utils.constants import ( RUNNING, RUNNING_SHIELD, RUNNING_HAMMER,
                                           JUMPING, JUMPING_SHIELD, JUMPING_HAMMER,
                                           DUCKING, DUCKING_SHIELD, DUCKING_HAMMER,   
-                                          DEFAULT_TYPE, SHIELD_TYPE, HAMMER_TYPE)
+                                          DEFAULT_TYPE, SHIELD_TYPE, HAMMER_TYPE, SCREEN_HEIGHT, SCREEN_WIDTH)
+from dino_runner.utils.constants import HAMMER, SHIELD, HEART, HEART_TYPE
+from dino_runner.components import text_utils
 import pygame
 import time
 
@@ -26,11 +28,14 @@ class Dinosaur:
     self.dino_duck = False
     self.jump_vel = self.JUMP_VEL
     self.dino_dead = False
-    self.score = 0
-    self.shield = False
-    self.hammer = False
-    self.time_up_power_up = 0
-    
+    self.lives = 3
+    self.shield = {"is_activated": False, "active_time": 0, "time_up_power_up": 0}
+    self.hammer = {"is_activated": False, 
+                   "active_time": 0, 
+                   "time_up_power_up": 0, 
+                   "used": False,
+                   "vel": 30,
+                   "pos": HAMMER.get_rect()}
     
   def update(self, user_input):
     if self.dino_jump:
@@ -42,7 +47,6 @@ class Dinosaur:
     elif self.dino_run:
       self.run()
 
-
     if user_input[pygame.K_DOWN] and not self.dino_jump:
       self.dino_run = False
       self.dino_duck = True
@@ -53,28 +57,55 @@ class Dinosaur:
       self.dino_duck = False
       self.dino_jump = True
 
+    elif user_input[pygame.K_q] and not self.dino_jump and self.hammer["is_activated"]:
+      self.hammer["pos"] = self.dino_rect 
+      self.hammer["used"] = True
+      self.reset_hammer()
+
     elif not self.dino_jump:
       self.run()
 
     if self.step_index >= 9:
       self.step_index = 0
 
-    if self.shield:
-      time_to_show = round((self.time_up_power_up - pygame.time.get_ticks()) / 1000, 2)
+    if self.shield["is_activated"]:
+      time_to_show = round((self.shield["time_up_power_up"] - pygame.time.get_ticks()) / 1000, 2)
+      self.shield["active_time"] = round(time_to_show)
       if time_to_show < 0:
-        self.reset()
+        self.reset_shield()
 
-    if self.hammer:
+    if self.hammer["is_activated"]:
       time_to_show = round((self.time_up_power_up - pygame.time.get_ticks()) / 1000, 2)
+      self.hammer["active_time"] = round(time_to_show)
       if time_to_show < 0:
-        self.reset()
+        self.reset_hammer()
 
-  def draw(self, screen):
+    if self.hammer["used"]:
+      self.hammer["pos"][0] += self.hammer["vel"]
+
+    if self.hammer["pos"].x > SCREEN_WIDTH:
+      self.hammer["used"] = False
+
+  def draw(self, screen, score_color):
     screen.blit(self.image, self.dino_rect)
+    screen.blit(HEART, (SCREEN_WIDTH - 120, 0))
+    text, text_rect = text_utils.get_message_power_up(str(self.lives), 20, score_color)
+    screen.blit(text, (SCREEN_WIDTH - 70, 0))
+    if self.shield["is_activated"]:
+      screen.blit(SHIELD, (SCREEN_WIDTH - 120, 30))
+      text, text_rect = text_utils.get_message_power_up(str(self.shield["active_time"]), 20, score_color)
+      screen.blit(text, (SCREEN_WIDTH - 70, 40))
 
+    if self.hammer["is_activated"]:
+      screen.blit(HAMMER, (SCREEN_WIDTH - 120, 70))
+      text, text_rect = text_utils.get_message_power_up(str(self.hammer["active_time"]), 20, score_color)
+      screen.blit(text, (SCREEN_WIDTH - 70, 80))
 
+    if self.hammer["used"]:
+      screen.blit(HAMMER, self.hammer["pos"])
+
+    
   def run(self):
-    # self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1]
     self.image = self.run_img[self.type][self.step_index // 5]
     self.dino_rect = self.image.get_rect()
     self.dino_rect.x = self.X_POS
@@ -82,8 +113,6 @@ class Dinosaur:
     self.step_index += 1
 
   def duck(self):
-    # self.image = DUCKING[0] if self.step_index < 5 else DUCKING[1]
-    # self.image = DUCKING[self.step_index // 5]
     self.image = self.duck_img[self.type][self.step_index // 5]
     self.dino_rect = self.image.get_rect()
     self.dino_rect.x = self.X_POS
@@ -91,7 +120,6 @@ class Dinosaur:
     self.step_index += 1
 
   def jump(self):
-    # self.image = JUMPING
     self.image = self.jump_img[self.type]
     if self.dino_jump:
       self.dino_rect.y -= self.jump_vel * 4 
@@ -105,15 +133,23 @@ class Dinosaur:
   def set_power_up(self, power_up):
     if power_up.type == SHIELD_TYPE:
       self.type = SHIELD_TYPE
-      self.shield = True
-      self.time_up_power_up = power_up.time_up
+      self.shield["is_activated"] = True
+      self.shield["time_up_power_up"] = power_up.time_up
 
     elif power_up.type == HAMMER_TYPE:
       self.type = HAMMER_TYPE
-      self.hammer = True
+      self.hammer["is_activated"] = True
       self.time_up_power_up = power_up.time_up
 
-  def reset(self):
+    elif power_up.type == HEART_TYPE:
+      self.lives += 1 
+
+  def reset_shield(self):
     self.type = DEFAULT_TYPE
-    self.shield = False
-    self.time_up_power_up = 0
+    self.shield["is_activated"] = False
+    self.shield["time_up_power_up"] = 0
+
+  def reset_hammer(self):
+    self.type = DEFAULT_TYPE
+    self.hammer["is_activated"] = False
+    self.hammer["time_up_power_up"] = 0
